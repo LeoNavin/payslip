@@ -50,9 +50,9 @@ jobs:
       #       chmod +x wait-for-it.sh
       #       ./wait-for-it.sh mysql:3306 --timeout=30 --strict -- echo "MySQL is up"
 
-      - name: Check MySQL health
-        run: |
-          docker-compose exec mysql mysqladmin ping --silent || exit 1
+      # - name: Check MySQL health
+      #   run: |
+      #     docker-compose exec mysql mysqladmin ping --silent || exit 1
 
       - name: Wait for MySQL
         run: |
