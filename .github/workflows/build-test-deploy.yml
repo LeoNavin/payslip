@@ -32,8 +32,8 @@ jobs:
 
       - name: Run the generated JAR file
         env:
-          MYSQL_USER: ${{ secrets.root }}  # Use the secret for MySQL username
-          MYSQL_PASSWORD: ${{ secrets.root }}  # Use the secret for MySQL password
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for My
         run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
 
       - name: Archive build artifacts
