@@ -20,11 +20,11 @@ jobs:
           MYSQL_DATABASE: payslip
         ports:
           - 3306:3306
-        # options: > 
-        #   --health-cmd="mysqladmin ping --silent" 
-        #   --health-interval=10s
-        #   --health-timeout=5s
-        #   --health-retries=5
+        options: >
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
   #   services:
   # mysql:
@@ -44,11 +44,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3  # Checkout the repository code
 
+      # - name: Wait for MySQL
+      #   run: |
+      #       curl -L -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+      #       chmod +x wait-for-it.sh
+      #       ./wait-for-it.sh mysql:3306 --timeout=30 --strict -- echo "MySQL is up"
+
+      - name: Check MySQL health
+        run: |
+          docker-compose exec mysql mysqladmin ping --silent || exit 1
+
       - name: Wait for MySQL
         run: |
-            curl -L -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-            chmod +x wait-for-it.sh
-            ./wait-for-it.sh mysql:3306 --timeout=200 --strict -- echo "MySQL is up"
+          until mysqladmin ping -h "mysql" --silent; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+          echo "MySQL is up!"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3  # Set up Java environment
