@@ -1,0 +1,35 @@
+name: build-test-deploy
+
+on: 
+  push:
+    branches:
+      - main  # Trigger the action on push to the main branch
+  pull_request:
+    branches:
+      - main  # Trigger the action on pull requests to the main branch
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest  # Use the latest version of Ubuntu
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Checkout the repository code
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3  # Set up Java environment
+        with:
+          distribution: 'temurin'  # Install the Temurin distribution of OpenJDK
+          java-version: '17'  # Use Java 17 (adjust to your version)
+
+      - name: Build with Maven
+        run: mvn clean package  # Clean and build the project, generating the JAR file
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3  # Upload the JAR file as an artifact
+        with:
+          name: java-app  # Name of the artifact
+          path: target/*.jar  # Path to the JAR file in the target directory
+          
+      # Optional: Deploy step (e.g., pushing to a server, uploading to a repository)
+      # You can add deployment steps here if required
