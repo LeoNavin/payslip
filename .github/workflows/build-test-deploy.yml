@@ -20,11 +20,11 @@ jobs:
           MYSQL_DATABASE: payslip
         ports:
           - 3306:3306
-        options: >
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        options: >-
+          # --health-cmd="mysqladmin ping --silent"
+          # --health-interval=10s
+          # --health-timeout=5s
+          # --health-retries=5
 
   #   services:
   # mysql:
@@ -61,6 +61,9 @@ jobs:
             sleep 5
           done
           echo "MySQL is up!"
+      - name: Inspect Docker Container
+        run: docker inspect $(docker ps -q -f name=mysql) || echo "No container found"
+
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3  # Set up Java environment
