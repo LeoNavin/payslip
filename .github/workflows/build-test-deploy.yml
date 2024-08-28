@@ -21,6 +21,11 @@ jobs:
         with:
           distribution: 'temurin'  # Install the Temurin distribution of OpenJDK
           java-version: '17'  # Use Java 17 (adjust to your version)
+          cache: maven  # Cache Maven dependencies to speed up builds
+          # Install Maven
+          server-id: maven  # Optional: configure server credentials
+          server-username: ${{ secrets.MAVEN_USERNAME }}
+          server-password: ${{ secrets.MAVEN_PASSWORD }}
 
       - name: Build with Maven
         run: mvn clean package  # Clean and build the project, generating the JAR file
