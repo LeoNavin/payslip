@@ -18,8 +18,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: payslip
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          # MYSQL_USER: root
+          # MYSQL_PASSWORD: root
         ports:
           - 3306:3306
         # options: >-
@@ -102,9 +102,21 @@ jobs:
         env:
             # MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
             # MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for My
-             MYSQL_USER: root
-             MYSQL_PASSWORD: root
-        run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
+            MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
+            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for My
+        # run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
+        run:
+          java -jar target/*.jar > app.log 2>&1 &
+          echo "Application started. Logs:"
+          tail -n 10 app.log
+
+      - name: Check if the service is running on port 8088
+        run: |
+          netstat -tuln | grep 8088
+
+      - name: Check application health on port 8088
+        run: |
+          curl -I http://localhost:8088/health  # Adjust /health if needed
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v3  # Upload the JAR file as an artifact
