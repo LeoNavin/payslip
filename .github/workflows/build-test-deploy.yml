@@ -30,6 +30,9 @@ jobs:
       - name: Build with Maven
         run: mvn clean package  # Clean and build the project, generating the JAR file
 
+      - name: Run the generated JAR file
+        run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
+
       - name: Archive build artifacts
         uses: actions/upload-artifact@v3  # Upload the JAR file as an artifact
         with:
