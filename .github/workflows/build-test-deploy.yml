@@ -59,10 +59,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mysql-server
 
-      - name: Run MySQL setup script
-        run: |
-          chmod +x setup-mysql.sh
-          ./setup-mysql.sh
+      # - name: Run MySQL setup script
+      #   run: |
+      #     chmod +x setup-mysql.sh
+      #     ./setup-mysql.sh
 
       - name: Wait for MySQL
         run: |
