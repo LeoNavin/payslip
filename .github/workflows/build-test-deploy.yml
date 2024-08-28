@@ -31,6 +31,9 @@ jobs:
         run: mvn clean package  # Clean and build the project, generating the JAR file
 
       - name: Run the generated JAR file
+        env:
+          MYSQL_USER: ${{ secrets.root }}  # Use the secret for MySQL username
+          MYSQL_PASSWORD: ${{ secrets.root }}  # Use the secret for MySQL password
         run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
 
       - name: Archive build artifacts
