@@ -79,7 +79,7 @@ jobs:
         with:
           name: java-app  # Name of the artifact
           path: target/*.jar  # Path to the JAR file in the target directory
-
+    
     run: |
         # Define the directory where you want to run the JAR file, relative to the GitHub workspace
         RUN_DIR="${GITHUB_WORKSPACE}/payslipdev"  # Replace 'my-app-dir' with your desired subdirectory
