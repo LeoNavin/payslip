@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean install
 
 # Use an official OpenJDK image to run the application
-FROM openjdk:17-jdk
+FROM openjdk:17.0.1-jdk-slim
 
 # Set the working directory
 WORKDIR /app
