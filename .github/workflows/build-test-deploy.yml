@@ -80,21 +80,21 @@ jobs:
           name: java-app  # Name of the artifact
           path: target/*.jar  # Path to the JAR file in the target directory
 
-  DeployDev:
-    name: Deploy to Dev
-    # if: github.event_name == 'pull_request'
-    if: github.event.ref == 'refs/heads/main'
-    needs: [build]
-    runs-on: ubuntu-latest
-    # env:
-    #   name: Development
-    #   url: 'http://dev.payslip.com'
-    env:
-      name: production
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        run: echo I am deploying!
+  # DeployDev:
+  #   name: Deploy to Dev
+  #   # if: github.event_name == 'pull_request'
+  #   if: github.event.ref == 'refs/heads/main'
+  #   needs: [build]
+  #   runs-on: ubuntu-latest
+  #   # env:
+  #   #   name: Development
+  #   #   url: 'http://dev.payslip.com'
+  #   env:
+  #     name: production
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: Deploy
+  #       run: echo I am deploying!
 
   # DeployStaging:
   #   name: Deploy to Staging
@@ -107,6 +107,23 @@ jobs:
   #   steps:
   #     - name: Deploy
   #       run: echo I am deploying!
+
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        id: deploy
+        run: echo I am deploying!
+
+      - name: Get deployment URL
+        id: get-url
+        run: echo "page_url=https://example.com" >> $GITHUB_ENV
+
+    environment:
+      name: production
+      url: ${{ env.page_url }}
 
   # DeployProd:
   #   name: Deploy to Production
