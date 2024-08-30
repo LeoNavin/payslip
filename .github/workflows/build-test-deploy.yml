@@ -114,6 +114,11 @@ jobs:
     env:
      name: Production
      url: 'http://dev.payslip.com'
+     MYSQL_HOST: 'localhost'
+     MYSQL_PORT: '3306'
+     MYSQL_DB: 'payslip'
+     MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Set in GitHub secrets
+     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Set in GitHub secrets
     steps:
        - name: Checkout repository
          uses: actions/checkout@v3  # Ensure the code is checked out
