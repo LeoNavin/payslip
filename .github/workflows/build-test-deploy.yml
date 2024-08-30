@@ -87,7 +87,22 @@ jobs:
         env:
           MYSQL_USER: ${{ secrets.MYSQL_USER }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-        run: ./run.sh
+        run: |
+              # Define the directory where you want to run the JAR file
+              RUN_DIR="/home/runner/work/your-repo/your-repo/target"  # Adjust based on actual location
+    
+              # Create the directory if it doesn't exist
+              # mkdir -p $RUN_DIR
+    
+              # Move to the directory
+              # cd $RUN_DIR
+    
+              # Run the JAR file and capture logs
+               java -jar your-app.jar > app.log 2>&1 &
+    
+              # Display the last 10 lines of the log file
+              echo "Application started. Logs:"
+              tail -n 10 app.log
 
 
 
