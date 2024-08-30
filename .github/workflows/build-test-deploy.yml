@@ -111,26 +111,91 @@ jobs:
     # env:
     #   name: Production
     #   url: 'http://prod.payslip.com'
-    env:
-     name: Production
-     url: 'http://dev.payslip.com'
-     MYSQL_HOST: 'localhost'
-     MYSQL_PORT: '3306'
-     MYSQL_DB: 'payslip'
-     MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Set in GitHub secrets
-     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Set in GitHub secrets
-    steps:
-       - name: Checkout repository
-         uses: actions/checkout@v3  # Ensure the code is checked out
+    # env:
+    #  name: Production
+    #  url: 'http://dev.payslip.com'
+    #  MYSQL_HOST: 'localhost'
+    #  MYSQL_PORT: '3306'
+    #  MYSQL_DB: 'payslip'
+    #  MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Set in GitHub secrets
+    #  MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Set in GitHub secrets
+    # steps:
+    #    - name: Checkout repository
+    #      uses: actions/checkout@v3  # Ensure the code is checked out
 
-       - name: Build with Maven
-         run: mvn clean package  # Build the project
+    #    - name: Build with Maven
+    #      run: mvn clean package  # Build the project
 
-       - name: List target directory contents
-         run: ls -al target/  # Verify JAR file creation
+    #    - name: List target directory contents
+    #      run: ls -al target/  # Verify JAR file creation
 
-       - name: Print working directory
-         run: pwd  # Confirm the working directory
+    #    - name: Print working directory
+    #      run: pwd  # Confirm the working directory
       
-       - name: Deploy
-         run: java -jar target/*.jar --url=${{ env.url }}
+    #    - name: Deploy
+    #      run: java -jar target/*.jar --url=${{ env.url }}
+
+    env:
+      name: Production
+      url: 'http://dev.payslip.com'
+      MYSQL_HOST: 'localhost'  # Using localhost as the Docker container will be on the same network
+      MYSQL_PORT: '3306'
+      MYSQL_DB: 'payslip'
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Set in GitHub secrets
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Set in GitHub secrets
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: payslip
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      # Wait for MySQL to be fully ready
+      - name: Wait for MySQL
+        run: |
+          timeout=300
+          start_time=$(date +%s)
+          until mysqladmin ping -h "localhost" -P 3306 --silent; do
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
+            if [ $elapsed -gt $timeout ]; then
+              echo "Timeout reached, MySQL is not available."
+              exit 1
+            fi
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+          echo "MySQL is up!"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: Run the generated JAR file
+        run: |
+          java -jar target/*.jar \
+            --url=${{ env.url }} \
+            --db-host=${{ env.MYSQL_HOST }} \
+            --db-port=${{ env.MYSQL_PORT }} \
+            --db-name=${{ env.MYSQL_DB }} \
+            --db-user=${{ env.MYSQL_USER }} \
+            --db-password=${{ env.MYSQL_PASSWORD }}
