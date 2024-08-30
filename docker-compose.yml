@@ -1,79 +1,44 @@
-version: '3.8'
-
-
-services:
-     mysql:
-        image: mysql:8.0  # Use MySQL 8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: payslip
-        ports:
-          - 3306:3306
-
-     steps: 
-      - name: Checkout repository
-        uses: actions/checkout@v3  # Checkout the repository code
-
-      - name: Install MySQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-client
-      - name: Wait for MySQL
-        run: |
-          timeout=300
-          start_time=$(date +%s)
-          until mysqladmin ping -h "127.0.0.1" -P 3306 --silent; do
-            current_time=$(date +%s)
-            elapsed=$((current_time - start_time))
-            if [ $elapsed -gt $timeout ]; then
-              echo "Timeout reached, MySQL is not available."
-              exit 1
-            fi
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
-          echo "MySQL is up!"
-
 # version: '3.8'
 
+
 # services:
-#   mysql:
-#     image: mysql:8.0  # Ensure you use a valid image version
-#     environment:
-#       MYSQL_ROOT_PASSWORD: root
-#       MYSQL_DATABASE: payslip
-#       MYSQL_USER: root
-#       MYSQL_PASSWORD: root
-#     ports:
-#       - "3306:3306"
-#     networks:
-#       - app-network
+#      mysql:
+#         image: mysql:8.0  # Use MySQL 8.0
+#         env:
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_DATABASE: payslip
+#         ports:
+#           - 3306:3306
 
-#   app:
-#     build:
-#       context: .
-#     environment:
-#       MYSQL_HOST: mysql
-#       MYSQL_PORT: 3306
-#       MYSQL_DATABASE: payslip
-#       MYSQL_USER: root
-#       MYSQL_PASSWORD: root
-#     depends_on:
-#       - mysql
-#     ports:
-#       - "8080:8080"
-#     networks:
-#       - app-network
+#      steps: 
+#       - name: Checkout repository
+#         uses: actions/checkout@v3  # Checkout the repository code
 
-# networks:
-#   app-network:
-
+#       - name: Install MySQL client
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y mysql-client
+#       - name: Wait for MySQL
+#         run: |
+#           timeout=300
+#           start_time=$(date +%s)
+#           until mysqladmin ping -h "127.0.0.1" -P 3306 --silent; do
+#             current_time=$(date +%s)
+#             elapsed=$((current_time - start_time))
+#             if [ $elapsed -gt $timeout ]; then
+#               echo "Timeout reached, MySQL is not available."
+#               exit 1
+#             fi
+#             echo "Waiting for MySQL..."
+#             sleep 5
+#           done
+#           echo "MySQL is up!"
 
 # # version: '3.8'
 
 # # services:
 # #   mysql:
-# #     image: mysql:8.7
+# #     image: mysql:8.0  # Ensure you use a valid image version
 # #     environment:
 # #       MYSQL_ROOT_PASSWORD: root
 # #       MYSQL_DATABASE: payslip
@@ -86,7 +51,7 @@ services:
 
 # #   app:
 # #     build:
-# #       context: .  # Path to the directory containing the Dockerfile
+# #       context: .
 # #     environment:
 # #       MYSQL_HOST: mysql
 # #       MYSQL_PORT: 3306
@@ -99,16 +64,51 @@ services:
 # #       - "8080:8080"
 # #     networks:
 # #       - app-network
-# #  # Define volumes here
 
-#   payslip-backend:
-#     container_name: payslip-backend
-#     build: ../
-#     image: payslip-backend
-#     command: sh -c "java -jar payslip.jar"
-#     volumes:
-#       - ../:/app
-#     ports:
-#       - 8080:8080
-#     depends_on:
-#       - payslip
+# # networks:
+# #   app-network:
+
+
+# # # version: '3.8'
+
+# # # services:
+# # #   mysql:
+# # #     image: mysql:8.7
+# # #     environment:
+# # #       MYSQL_ROOT_PASSWORD: root
+# # #       MYSQL_DATABASE: payslip
+# # #       MYSQL_USER: root
+# # #       MYSQL_PASSWORD: root
+# # #     ports:
+# # #       - "3306:3306"
+# # #     networks:
+# # #       - app-network
+
+# # #   app:
+# # #     build:
+# # #       context: .  # Path to the directory containing the Dockerfile
+# # #     environment:
+# # #       MYSQL_HOST: mysql
+# # #       MYSQL_PORT: 3306
+# # #       MYSQL_DATABASE: payslip
+# # #       MYSQL_USER: root
+# # #       MYSQL_PASSWORD: root
+# # #     depends_on:
+# # #       - mysql
+# # #     ports:
+# # #       - "8080:8080"
+# # #     networks:
+# # #       - app-network
+# # #  # Define volumes here
+
+# #   payslip-backend:
+# #     container_name: payslip-backend
+# #     build: ../
+# #     image: payslip-backend
+# #     command: sh -c "java -jar payslip.jar"
+# #     volumes:
+# #       - ../:/app
+# #     ports:
+# #       - 8080:8080
+# #     depends_on:
+# #       - payslip

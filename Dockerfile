@@ -34,11 +34,11 @@ COPY --from=build /app/target/payslip-0.0.1-SNAPSHOT.jar payslip.jar
 
 # Set environment variables for MySQL connection
 # These are used to configure the application's database connection
-ENV MYSQL_HOST=localhost
+ENV MYSQL_HOST=bkojvji1j4pc2tqluate-mysql.services.clever-cloud.com
 ENV MYSQL_PORT=3306
-ENV MYSQL_DATABASE=payslip
-ENV MYSQL_USER=root
-ENV MYSQL_PASSWORD=root
+ENV MYSQL_DATABASE=bkojvji1j4pc2tqluate
+ENV MYSQL_USER=u2bcnnc5woilutnd
+ENV MYSQL_PASSWORD=P6tHs15KlSC6HSvMTwxN
 
 # Specify the command to run the application when the container starts
 # This command runs the JAR file using the Java runtime
