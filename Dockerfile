@@ -1,6 +1,6 @@
 # Use an official Maven image with OpenJDK 17 to build the project
 # The Maven image includes Maven and JDK, which is needed to compile the Java project
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.8.3-openjdk-17 AS build
 
 # Set the working directory inside the container to /app
 # This directory is where we will copy our Maven project files and perform the build
@@ -20,7 +20,7 @@ RUN mvn clean install
 
 # Use a lightweight OpenJDK 17 image to run the application
 # This stage uses a separate image to reduce the final image size
-FROM openjdk:17.0.1-jdk-slim
+FROM adoptopenjdk:11-jre-hotspot
 
 # Set the working directory inside the container to /app
 # This is where the JAR file will be copied and run from
