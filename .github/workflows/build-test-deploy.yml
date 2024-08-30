@@ -115,5 +115,17 @@ jobs:
      name: Production
      url: 'http://dev.payslip.com'
     steps:
-     - name: Deploy
-       run: java -jar target/*.jar --url=${{ env.url }}
+       - name: Checkout repository
+         uses: actions/checkout@v3  # Ensure the code is checked out
+
+       - name: Build with Maven
+         run: mvn clean package  # Build the project
+
+       - name: List target directory contents
+         run: ls -al target/  # Verify JAR file creation
+
+       - name: Print working directory
+         run: pwd  # Confirm the working directory
+      
+       - name: Deploy
+         run: java -jar target/*.jar --url=${{ env.url }}
