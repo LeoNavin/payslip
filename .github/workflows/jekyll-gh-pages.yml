@@ -49,11 +49,11 @@ jobs:
       - name: Download JAR file
         uses: actions/download-artifact@v3
         with:
-          name: my-app-jar
+          name: payslip
 
       - name: Run JAR file
         run: |
-          java -jar target/my-app.jar --spring.datasource.url=jdbc:mysql://localhost:3306/payslip --spring.datasource.username=root --spring.datasource.password=root
+          java -jar target/payslip.jar --spring.datasource.url=jdbc:mysql://localhost:3306/payslip --spring.datasource.username=root --spring.datasource.password=root
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/payslip
           SPRING_DATASOURCE_USERNAME: root
