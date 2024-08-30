@@ -44,9 +44,11 @@ ENV MYSQL_PASSWORD=P6tHs15KlSC6HSvMTwxN
 # This command runs the JAR file using the Java runtime
 
 EXPOSE 8080
-CMD java -jar  payslip.jar runserver 0.0.0.0:8080
+# CMD java -jar  payslip.jar runserver 0.0.0.0:8080
 
-ENTRYPOINT ["java", "-jar", "payslip.jar"]
+# ENTRYPOINT ["java", "-jar", "payslip.jar"]
+ENTRYPOINT ["java", "-Dspring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}", "-Dspring.datasource.username=${MYSQL_USER}", "-Dspring.datasource.password=${MYSQL_PASSWORD}", "-jar", "payslip.jar"]
+
 
 
 # # Use an official Maven image to build the project
