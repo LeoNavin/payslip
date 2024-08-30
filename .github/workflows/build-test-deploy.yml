@@ -80,6 +80,26 @@ jobs:
           name: java-app  # Name of the artifact
           path: target/*.jar  # Path to the JAR file in the target directory
 
+    run: |
+        # Define the directory where you want to run the JAR file, relative to the GitHub workspace
+        RUN_DIR="${GITHUB_WORKSPACE}/payslipdev"  # Replace 'my-app-dir' with your desired subdirectory
+
+        # Create the directory if it doesn't exist
+        mkdir -p $RUN_DIR
+    
+        # Copy the JAR file to the desired location
+        cp target/*.jar $RUN_DIR/
+    
+        # Change to the desired directory
+        cd $RUN_DIR
+    
+        # Run the JAR file and capture logs
+        java -jar *.jar > app.log 2>&1 &
+    
+        # Display the last 10 lines of the log file
+        echo "Application started. Logs:"
+        tail -n 10 app.log
+
   # DeployDev: 
   #   name: Deploy to Dev
   #   # if: github.event_name == 'pull_request'
@@ -107,23 +127,23 @@ jobs:
   #   steps:
   #     - name: Deploy
   #       run: echo I am deploying!
+# this file is working for production with review also asked
+  # deploy:
+  #   name: Deploy to Production
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy
+  #       id: deploy
+  #       run: echo I am deploying!
 
-  deploy:
-    name: Deploy to Production
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        id: deploy
-        run: echo I am deploying!
+  #     - name: Get deployment URL
+  #       id: get-url
+  #       run: echo "page_url=https://example.com" >> $GITHUB_ENV
 
-      - name: Get deployment URL
-        id: get-url
-        run: echo "page_url=https://example.com" >> $GITHUB_ENV
-
-    environment:
-      name: production
-      url: ${{ env.page_url }}
+  #   environment:
+  #     name: production
+  #     url: ${{ env.page_url }}
 
   # DeployProd:
   #   name: Deploy to Production
