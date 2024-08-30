@@ -10,6 +10,8 @@ services:
       MYSQL_PASSWORD: root
     ports:
       - "3306:3306"
+    networks:
+      - app-network
 
   app:
     build:
@@ -24,3 +26,23 @@ services:
       - mysql
     ports:
       - "8080:8080"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+  
+  volumes:
+  mysql-data:  # Define volumes here
+
+  cristoplus-backend:
+    container_name: payslip-backend
+    build: ./
+    image: payslip-backend
+    command: sh -c "Java -jar payslip.jar"
+    volumes:
+      - ./:/code
+    ports:
+      - 8080:8080
+    depends_on:
+      - payslip
