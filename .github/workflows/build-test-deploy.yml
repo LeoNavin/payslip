@@ -18,53 +18,17 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: payslip
-          # MYSQL_USER: root
-          # MYSQL_PASSWORD: root
         ports:
           - 3306:3306
-        # options: >-
-          # --health-cmd="mysqladmin ping --silent"
-          # --health-interval=10s
-          # --health-timeout=5s
-          # --health-retries=5
-
-  #   services:
-  # mysql:
-  #   image: mysql:8.0
-  #   env:
-  #     MYSQL_ROOT_PASSWORD: root
-  #     MYSQL_DATABASE: payslip
-  #   ports:
-  #     - 3306:3306
-  #   options: >
-  #     --health-cmd="mysqladmin ping --silent"
-  #     --health-interval=10s
-  #     --health-timeout=5s
-  #     --health-retries=5
 
     steps: 
       - name: Checkout repository
         uses: actions/checkout@v3  # Checkout the repository code
 
-      # - name: Wait for MySQL
-      #   run: |
-      #       curl -L -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-      #       chmod +x wait-for-it.sh
-      #       ./wait-for-it.sh mysql:3306 --timeout=30 --strict -- echo "MySQL is up"
-
-      # - name: Check MySQL health
-      #   run: |
-      #     docker-compose exec mysql mysqladmin ping --silent || exit 1
-
-      - name: Install MySQL
+      - name: Install MySQL client
         run: |
           sudo apt-get update
-          sudo apt-get install -y mysql-server
-
-      # - name: Run MySQL setup script
-      #   run: |
-      #     chmod +x setup-mysql.sh
-      #     ./setup-mysql.sh
+          sudo apt-get install -y mysql-client
 
       - name: Wait for MySQL
         run: |
@@ -82,29 +46,20 @@ jobs:
           done
           echo "MySQL is up!"
 
-
-
       - name: Set up JDK 17
         uses: actions/setup-java@v3  # Set up Java environment
         with:
           distribution: 'temurin'  # Install the Temurin distribution of OpenJDK
-          java-version: '17'  # Use Java 17 (adjust to your version)
+          java-version: '17'  # Use Java 17
           cache: maven  # Cache Maven dependencies to speed up builds
-          # Install Maven
-          server-id: maven  # Optional: configure server credentials
-          server-username: ${{ secrets.MAVEN_USERNAME }}
-          server-password: ${{ secrets.MAVEN_PASSWORD }}
 
       - name: Build with Maven
         run: mvn clean package  # Clean and build the project, generating the JAR file
 
       - name: Run the generated JAR file
         env:
-            # MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
-            # MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for My
-            MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
-            MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for My
-        # run: java -jar target/*.jar  # Run the JAR file (assuming it is located in the target directory)
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}  # Use the secret for MySQL username
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}  # Use the secret for MySQL password
         run: |
           java -jar target/*.jar > app.log 2>&1 &
           echo "Application started. Logs:"
@@ -124,6 +79,38 @@ jobs:
         with:
           name: java-app  # Name of the artifact
           path: target/*.jar  # Path to the JAR file in the target directory
-          
-      # Optional: Deploy step (e.g., pushing to a server, uploading to a repository)
-      # You can add deployment steps here if required
+
+  DeployDev:
+    name: Deploy to Dev
+    if: github.event_name == 'pull_request'
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      name: Development
+      url: 'http://dev.payslip.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying!
+
+  DeployStaging:
+    name: Deploy to Staging
+    if: github.event.ref == 'refs/heads/main'
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      name: Staging
+      url: 'http://test.payslip.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying!
+
+  DeployProd:
+    name: Deploy to Production
+    needs: [DeployStaging]
+    runs-on: ubuntu-latest
+    env:
+      name: Production
+      url: 'http://prod.payslip.com'
+    steps:
+      - name: Deploy
+        run: echo I am deploying!
