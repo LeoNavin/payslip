@@ -1,5 +1,7 @@
 # Use an official Maven image with OpenJDK 17 to build the project
 # The Maven image includes Maven and JDK, which is needed to compile the Java project
+
+
 FROM maven:3.8.3-openjdk-17 AS build
 
 # Set the working directory inside the container to /app
