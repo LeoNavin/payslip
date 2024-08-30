@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0  # Ensure you use a valid image version
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: payslip
@@ -13,36 +13,106 @@ services:
     networks:
       - app-network
 
-  app:
+  payslip-backend:
+    container_name: payslip-backend
     build:
-      context: .  # Path to the directory containing the Dockerfile
+      context: ./  # Adjust path if Dockerfile is in a different directory
+    image: payslip-backend
+    command: sh -c "java -jar payslip.jar"
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DATABASE: payslip
       MYSQL_USER: root
       MYSQL_PASSWORD: root
-    depends_on:
-      - mysql
-    ports:
-      - "8080:8080"
     networks:
       - app-network
 
 networks:
   app-network:
-  
-  volumes:
-  mysql-data:  # Define volumes here
 
-  cristoplus-backend:
-    container_name: payslip-backend
-    build: ./
-    image: payslip-backend
-    command: sh -c "Java -jar payslip.jar"
-    volumes:
-      - ./:/code
-    ports:
-      - 8080:8080
-    depends_on:
-      - payslip
+
+# version: '3.8'
+
+# services:
+#   mysql:
+#     image: mysql:8.0  # Ensure you use a valid image version
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: payslip
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: root
+#     ports:
+#       - "3306:3306"
+#     networks:
+#       - app-network
+
+#   app:
+#     build:
+#       context: .
+#     environment:
+#       MYSQL_HOST: mysql
+#       MYSQL_PORT: 3306
+#       MYSQL_DATABASE: payslip
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: root
+#     depends_on:
+#       - mysql
+#     ports:
+#       - "8080:8080"
+#     networks:
+#       - app-network
+
+# networks:
+#   app-network:
+
+
+# # version: '3.8'
+
+# # services:
+# #   mysql:
+# #     image: mysql:8.7
+# #     environment:
+# #       MYSQL_ROOT_PASSWORD: root
+# #       MYSQL_DATABASE: payslip
+# #       MYSQL_USER: root
+# #       MYSQL_PASSWORD: root
+# #     ports:
+# #       - "3306:3306"
+# #     networks:
+# #       - app-network
+
+# #   app:
+# #     build:
+# #       context: .  # Path to the directory containing the Dockerfile
+# #     environment:
+# #       MYSQL_HOST: mysql
+# #       MYSQL_PORT: 3306
+# #       MYSQL_DATABASE: payslip
+# #       MYSQL_USER: root
+# #       MYSQL_PASSWORD: root
+# #     depends_on:
+# #       - mysql
+# #     ports:
+# #       - "8080:8080"
+# #     networks:
+# #       - app-network
+# #  # Define volumes here
+
+#   payslip-backend:
+#     container_name: payslip-backend
+#     build: ../
+#     image: payslip-backend
+#     command: sh -c "java -jar payslip.jar"
+#     volumes:
+#       - ../:/app
+#     ports:
+#       - 8080:8080
+#     depends_on:
+#       - payslip
