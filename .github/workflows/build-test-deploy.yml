@@ -90,7 +90,7 @@ jobs:
         run: |
               # Define the directory where you want to run the JAR file
               # RUN_DIR='/home/runner/work/payslip/payslip/target'  # Adjust based on actual location
-              RUN_DIR="${GITHUB_WORKSPACE}/target
+              RUN_DIR='${GITHUB_WORKSPACE}/target'
               # mkdir -p $RUN_DIR
               # cd $RUN_DIR
               java -jar $RUN_DIR/*.jar > app.log 2>&1 &
