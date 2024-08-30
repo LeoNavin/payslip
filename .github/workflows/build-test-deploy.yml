@@ -80,25 +80,16 @@ jobs:
           name: java-app  # Name of the artifact
           path: target/*.jar  # Path to the JAR file in the target directory
     
-    run: |
-        # Define the directory where you want to run the JAR file, relative to the GitHub workspace
-        RUN_DIR="${GITHUB_WORKSPACE}/payslipdev"  # Replace 'my-app-dir' with your desired subdirectory
+      - name: Build with Maven
+        run: mvn clean install
 
-        # Create the directory if it doesn't exist
-        mkdir -p $RUN_DIR
-    
-        # Copy the JAR file to the desired location
-        cp target/*.jar $RUN_DIR/
-    
-        # Change to the desired directory
-        cd $RUN_DIR
-    
-        # Run the JAR file and capture logs
-        java -jar *.jar > app.log 2>&1 &
-    
-        # Display the last 10 lines of the log file
-        echo "Application started. Logs:"
-        tail -n 10 app.log
+      - name: Run the generated JAR file
+        env:
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        run: ./run.sh
+
+
 
   # DeployDev: 
   #   name: Deploy to Dev
