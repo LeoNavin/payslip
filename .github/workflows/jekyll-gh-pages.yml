@@ -1,3 +1,69 @@
+
+name: Build and Deploy Java Application with MySQL
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # Specify the Java version required
+
+      - name: Build with Maven
+        run: mvn clean install  # Replace with your build command
+
+      - name: Archive JAR file
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-jar
+          path: target/my-app.jar  # Path to the JAR file
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: payslip
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download JAR file
+        uses: actions/download-artifact@v3
+        with:
+          name: my-app-jar
+
+      - name: Run JAR file
+        run: |
+          java -jar target/my-app.jar --spring.datasource.url=jdbc:mysql://localhost:3306/payslip --spring.datasource.username=root --spring.datasource.password=root
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/payslip
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root
+
+      - name: Deploy application
+        run: echo "Deploying application..."
+        # Add deployment commands here if needed
+
+
 # # Sample workflow for building and deploying a Jekyll site to GitHub Pages
 # name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
@@ -101,68 +167,3 @@
 #       - name: Deploy application
 #         run: echo "Deploying application..."
 #         # Add deployment commands here if needed
-
-
-name: Build and Deploy Java Application with MySQL
-
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'  # Specify the Java version required
-
-      - name: Build with Maven
-        run: mvn clean install  # Replace with your build command
-
-      - name: Archive JAR file
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-app-jar
-          path: target/my-app.jar  # Path to the JAR file
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: payslip
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Download JAR file
-        uses: actions/download-artifact@v3
-        with:
-          name: my-app-jar
-
-      - name: Run JAR file
-        run: |
-          java -jar target/my-app.jar --spring.datasource.url=jdbc:mysql://localhost:3306/payslip --spring.datasource.username=root --spring.datasource.password=root
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/payslip
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: root
-
-      - name: Deploy application
-        run: echo "Deploying application..."
-        # Add deployment commands here if needed
