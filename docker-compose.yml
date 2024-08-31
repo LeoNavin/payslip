@@ -10,6 +10,14 @@ spring:
    hibernate:
      ddl-auto: update
    show-sql: true
+
+services:
+  payslip:
+    image: payslip
+    deploy:
+      resources:
+        limits:
+          memory: 1g
 # services:
 #      mysql:
 #         image: mysql:8.0  # Use MySQL 8.0
