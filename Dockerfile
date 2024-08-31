@@ -22,6 +22,8 @@
 
 # Use a lightweight OpenJDK 17 image to run the application
 # This stage uses a separate image to reduce the final image size
+FROM maven:3.8.3-openjdk-17 AS build
+
 FROM adoptopenjdk:11-jre-hotspot
 
 # Set the working directory inside the container to /app
