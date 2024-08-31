@@ -55,7 +55,7 @@ EXPOSE 8080
 
 # ENTRYPOINT ["java", "-jar", "payslip.jar"]
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC"
-CMD java $JAVA_OPTS -jar your_application.jar
+CMD java $JAVA_OPTS -jar payslip.jar
 # ENTRYPOINT ["java", "-Dspring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}", "-Dspring.datasource.username=${MYSQL_USER}", "-Dspring.datasource.password=${MYSQL_PASSWORD}", "-jar", "payslip.jar"]
 
 
