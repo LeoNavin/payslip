@@ -23,7 +23,9 @@
 # Use a lightweight OpenJDK 17 image to run the application
 # This stage uses a separate image to reduce the final image size
 FROM maven:3.8.3-openjdk-17 AS build
-
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
 FROM adoptopenjdk:11-jre-hotspot
 
 # Set the working directory inside the container to /app
@@ -58,7 +60,7 @@ EXPOSE 8080
 # ENTRYPOINT ["java", "-jar", "payslip.jar"]
 ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC"
 CMD java $JAVA_OPTS -jar your_application.jar
-ENTRYPOINT ["java", "-Dspring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}", "-Dspring.datasource.username=${MYSQL_USER}", "-Dspring.datasource.password=${MYSQL_PASSWORD}", "-jar", "payslip.jar"]
+# ENTRYPOINT ["java", "-Dspring.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}", "-Dspring.datasource.username=${MYSQL_USER}", "-Dspring.datasource.password=${MYSQL_PASSWORD}", "-jar", "payslip.jar"]
 
 
 
