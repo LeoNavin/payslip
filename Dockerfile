@@ -2,36 +2,32 @@
 # The Maven image includes Maven and JDK, which is needed to compile the Java project
 
 
-# FROM maven:3.8.3-openjdk-17 AS build
+FROM maven:3.8.3-openjdk-17 AS build
 
 # Set the working directory inside the container to /app
 # This directory is where we will copy our Maven project files and perform the build
-# WORKDIR /app
+WORKDIR /app
 
 # Copy the Maven project descriptor file (pom.xml) to the working directory
 # This file contains the project configuration and dependencies
-# COPY pom.xml .
+COPY pom.xml .
 
 # Copy the source code (src directory) to the working directory
 # This directory contains the Java source files to be compiled
-# COPY src ./src
+COPY src ./src
 
 # Run Maven to clean any previous builds and install dependencies
 # This command will compile the project and package it into a JAR file
-
+RUN mvn clean install
 
 # Use a lightweight OpenJDK 17 image to run the application
 # This stage uses a separate image to reduce the final image size
-FROM maven:3.8.3-openjdk-17 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
 FROM adoptopenjdk:11-jre-hotspot
 
 # Set the working directory inside the container to /app
 # This is where the JAR file will be copied and run from
 WORKDIR /app
-RUN mvn clean install
+
 # Copy the JAR file generated in the build stage to the runtime stage
 # The JAR file is located in /app/target/ from the build stage
 COPY --from=build /app/target/payslip-0.0.1-SNAPSHOT.jar payslip.jar 
@@ -45,11 +41,11 @@ COPY --from=build /app/target/payslip-0.0.1-SNAPSHOT.jar payslip.jar
 # ENV MYSQL_PASSWORD=P6tHs15KlSC6HSvMTwxN
 
 
-ENV MYSQL_HOST=sql12.freesqldatabase.com
-ENV MYSQL_PORT=3306
-ENV MYSQL_DATABASE=sql12728760
-ENV MYSQL_USER=sql12728760
-ENV MYSQL_PASSWORD=FJJPx98u8u
+# ENV MYSQL_HOST=sql12.freesqldatabase.com
+# ENV MYSQL_PORT=3306
+# ENV MYSQL_DATABASE=sql12728760
+# ENV MYSQL_USER=sql12728760
+# ENV MYSQL_PASSWORD=FJJPx98u8u
 
 # Specify the command to run the application when the container starts
 # This command runs the JAR file using the Java runtime
